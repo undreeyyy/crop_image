@@ -2,6 +2,7 @@ import 'package:crop_image/crop_image.dart';
 import 'package:crop_image/src/crop_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' as vector_math;
 
 /// Widget to crop images.
 ///
@@ -59,6 +60,9 @@ class CropImage extends StatefulWidget {
   ///  * [CropController], which can be used to read this and other details of the crop rectangle.
   final ValueChanged<Rect>? onCrop;
 
+  /// Scales the image.
+  final double? scale;
+
   /// The minimum pixel size the crop rectangle can be shrunk to.
   ///
   /// Defaults to 100.
@@ -75,6 +79,7 @@ class CropImage extends StatefulWidget {
     this.scrimColor = Colors.black54,
     this.alwaysShowThirdLines = false,
     this.onCrop,
+    this.scale,
     this.minimumImageSize = 100,
   })  : assert(gridCornerSize > 0, 'gridCornerSize cannot be zero'),
         assert(gridThinWidth > 0, 'gridThinWidth cannot be zero'),
@@ -166,10 +171,22 @@ class _CropImageState extends State<CropImage> {
   @override
   Widget build(BuildContext context) => Stack(
         children: [
-          Image(
-            image: widget.image.image,
-            fit: BoxFit.cover,
-          ),
+          if (widget.scale != null)
+            Transform(
+              transform: Matrix4.diagonal3(vector_math.Vector3(
+                  widget.scale!, widget.scale!, widget.scale!))
+                ..translate(-200 / 2, -(200 / (2 / 3)) / 2),
+              alignment: FractionalOffset.center,
+              child: Image(
+                image: widget.image.image,
+                fit: BoxFit.cover,
+              ),
+            )
+          else
+            Image(
+              image: widget.image.image,
+              fit: BoxFit.cover,
+            ),
           Positioned.fill(
             child: GestureDetector(
               onPanStart: onPanStart,
