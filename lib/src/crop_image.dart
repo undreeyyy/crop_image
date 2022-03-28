@@ -174,8 +174,7 @@ class _CropImageState extends State<CropImage> {
           if (widget.scale != null)
             Transform(
               transform: Matrix4.diagonal3(vector_math.Vector3(
-                  widget.scale!, widget.scale!, widget.scale!))
-                ..translate(-200 / 2, -(200 / (2 / 3)) / 2),
+                  widget.scale!, widget.scale!, widget.scale!)),
               alignment: FractionalOffset.center,
               child: Image(
                 image: widget.image.image,
